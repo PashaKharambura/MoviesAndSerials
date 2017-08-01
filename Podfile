@@ -10,4 +10,5 @@ target 'moviesTestProgect' do
     pod 'MBProgressHUD'
     pod 'Cosmos', '~> 11.0'
 
+
 end

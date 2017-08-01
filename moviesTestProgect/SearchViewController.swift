@@ -40,9 +40,9 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
             let imageURL = URL(string: baseUrl + posterPath)
             cell.titleImage.setImageWith(imageURL!)
         }
-        let rating = "\(String(describing: serial?["vote_average"] as! Double))"
+        let rating = "\(String(describing: serial?["vote_average"] as! Double))/10"
         cell.rating.text = rating
-        cell.titleLabel.text = serial?["name"] as? String
+        cell.titleLabel.text = serial?["original_name"] as? String
         cell.localizedName.text = serial?["original_name"] as? String
         cell.ratingStars.rating = serial?["vote_average"] as! Double
     
@@ -102,11 +102,12 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     fileprivate func fetchRequest(query:String, page: Int) {
         
+        
         let newQuery = query.replacingOccurrences(of: " ", with: "+")
         let apiKey = "55580621b06134aae72c3266c0fed8bf"
-        let url = URL(string:"https://api.themoviedb.org/3/search/tv?api_key=\(apiKey)&query=\(newQuery)&page=\(page)")
-        
-        let request = URLRequest(url: url!)
+        if let url = URL(string:"https://api.themoviedb.org/3/search/tv?api_key=\(apiKey)&query=\(newQuery)&page=\(page)&language=\(langStr!)") {
+       
+        let request = URLRequest(url: url)
         
         let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
         
@@ -122,7 +123,7 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
             }
         })
         task.resume()
-        
+        }
     }
 
 }

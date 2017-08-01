@@ -48,18 +48,20 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 let imageURL = URL(string: baseUrl + posterPath)
                 cell.titleImage.setImageWith(imageURL!)
             }
-        cell.titleLabel.text = movie?["title"] as? String
-        cell.localizedName.text = movie?["original_title"] as? String
-        let rating = "\(String(describing: movie?["vote_average"] as! Double))"
+        cell.titleLabel.text = movie?["original_title"] as? String
+        cell.localizedName.text = movie?["title"] as? String
+        let rating = "\(String(describing: movie?["vote_average"] as! Double))/10"
         cell.rating.text = rating
         cell.ratingStars.rating = movie?["vote_average"] as! Double
         return cell
     }
     
     fileprivate  func fetchRequest(filter: String, page: Int) {
+        
         let apiKey = "55580621b06134aae72c3266c0fed8bf"
-        let url = URL(string:"https://api.themoviedb.org/3/movie/\(filter)?api_key=\(apiKey)&page=\(page)")
-        let request = URLRequest(url: url!)
+        if let url = URL(string:"https://api.themoviedb.org/3/movie/\(filter)?api_key=\(apiKey)&page=\(page)&language=\(langStr!)") {
+       
+        let request = URLRequest(url: url)
         
         let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
         
@@ -76,6 +78,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
             }
         })
         task.resume()
+        }
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as UIViewController

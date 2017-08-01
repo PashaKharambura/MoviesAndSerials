@@ -9,6 +9,8 @@
 import UIKit
 import AFNetworking
 
+public let langStr = Locale.current.languageCode
+
 class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
@@ -46,10 +48,11 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 let imageURL = URL(string: baseUrl + posterPath)
                 cell.titleImage.setImageWith(imageURL!)
             }
-        let rating = "\(String(describing: serial?["vote_average"] as! Double))"
+        let rating = "\(String(describing: serial?["vote_average"] as! Double))/10"
         cell.rating.text = rating
-        cell.titleLabel.text = serial?["name"] as? String
-        cell.localizedName.text = serial?["original_name"] as? String
+        cell.titleLabel.text = serial?["original_name"] as? String
+        
+        cell.localizedName.text = "(\(serial?["name"] as! String))"
         cell.ratingStars.rating = serial?["vote_average"] as! Double
         return cell
     }
@@ -133,23 +136,26 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     fileprivate func fetchRequest(filter: String, page: Int) {
         
+        
         let apiKey = "55580621b06134aae72c3266c0fed8bf"  
-        let url = URL(string:"https://api.themoviedb.org/3/tv/\(filter)?api_key=\(apiKey)&page=\(page)")
-        let request = URLRequest(url: url!)
-        
-        let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
-        
-        let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
-            if let data = dataOrNil {
-                if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
-                    self.serials = responseDictionary["results"] as? [NSDictionary]
-                    self.tableView.reloadData()
-                    print("\(responseDictionary)")
-                    SwiftSpinner.hide()
+        if let url = URL(string:"https://api.themoviedb.org/3/tv/\(filter)?api_key=\(apiKey)&page=\(page)&language=\(langStr!)") {
+
+            let request = URLRequest(url: url)
+            
+            let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
+            
+            let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
+                if let data = dataOrNil {
+                    if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
+                        self.serials = responseDictionary["results"] as? [NSDictionary]
+                        self.tableView.reloadData()
+                        print("\(responseDictionary)")
+                        SwiftSpinner.hide()
+                    }
+                    
                 }
-                
-            }
-        })
-        task.resume()
+            })
+            task.resume()
+        }
     }
 }

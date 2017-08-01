@@ -22,7 +22,7 @@ class MovieDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let title = selectedMovie["title"] as! String
+        let title = selectedMovie["original_title"] as! String
         titleNameLabe.text = title
 
 //        let details = selectedMovie["overview"] as! String

@@ -434,3 +434,12 @@ open class SwiftSpinner: UIView {
         tapHandler?()
     }
 }
+
+
+extension String {
+    var localized: String {
+        return NSLocalizedString(self, comment: "")
+    }
+}
+
+

@@ -21,7 +21,7 @@ class SerialDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let name = selectedSerial["name"] as! String
+        let name = selectedSerial["original_name"] as! String
         titleNameLabe.text = name
         
 //        let details = selectedSerial["overview"] as! String

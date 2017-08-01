@@ -8,14 +8,16 @@
 
 import UIKit
 import AFNetworking
-
+import Cosmos
 
 class MovieDetailsViewController: UIViewController {
 
-    @IBOutlet weak var posterImage: UIImageView!
-    @IBOutlet weak var titleNameLabe: UILabel!
-    @IBOutlet weak var detailsLabel: UILabel!
-
+    @IBOutlet weak var posterImage:     UIImageView!
+    @IBOutlet weak var titleNameLabe:   UILabel!
+    @IBOutlet weak var releaseDate:     UILabel!
+    @IBOutlet weak var voteAverage:     UILabel!
+    @IBOutlet weak var starsView:       CosmosView!
+    @IBOutlet weak var descriptionText: UITextView!
     
     var selectedMovie: NSDictionary!
     var imageUrl: String = ""
@@ -25,11 +27,10 @@ class MovieDetailsViewController: UIViewController {
 
         let title = selectedMovie["original_title"] as! String
         titleNameLabe.text = title
-
-//        let details = selectedMovie["overview"] as! String
-//        detailsLabel.text = details
-
-        
+        descriptionText.text = selectedMovie["overview"] as! String
+        releaseDate.text = selectedMovie["release_date"] as? String
+        voteAverage.text = "\(selectedMovie["vote_average"] as! Double)"
+        starsView.rating = selectedMovie?["vote_average"] as! Double
         if let posterPath = selectedMovie["poster_path"] as? String {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
                 if  let imageURL = URL(string: baseUrl + posterPath) {
@@ -37,9 +38,10 @@ class MovieDetailsViewController: UIViewController {
                 imageUrl = "\(String(describing: imageURL))"
             }
         }
+        
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
@@ -51,8 +53,6 @@ class MovieDetailsViewController: UIViewController {
         task.rating = selectedMovie["vote_average"] as! Double
         task.url = imageUrl
         task.localName = selectedMovie["title"] as? String
-        
-        // Save the data to coredata
         
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
         let _ = navigationController?.popViewController(animated: true)

@@ -12,26 +12,31 @@ import AFNetworking
 class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var popularButton: UIButton!
+    @IBOutlet weak var topRatedBitton: UIButton!
+    @IBOutlet weak var nowPlaying: UIButton!
     
-    fileprivate var popularPressed:Bool = true
-    fileprivate var topRatedPressed:Bool = true
-    fileprivate var nowPlayingPressed:Bool = true
-    fileprivate var movieFilter = "popular"
-    fileprivate var pageNumber: Int = 1
-    fileprivate var lastPage: Bool = false
-    
+    fileprivate var popularPressed:Bool     = true
+    fileprivate var topRatedPressed:Bool    = true
+    fileprivate var nowPlayingPressed:Bool  = true
+    fileprivate var movieFilter             = "popular"
+    fileprivate var pageNumber: Int         = 1
+    fileprivate var lastPage: Bool          = false
 
     var movies: [NSDictionary]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.dataSource = self
         tableView.delegate = self
         SwiftSpinner.show("Loadings movies")
         fetchRequest(filter: movieFilter, page: pageNumber)
+        popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        
     }
  
-    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+    override var preferredStatusBarStyle: UIStatusBarStyle { 
         return .lightContent
     }
     
@@ -48,16 +53,19 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell") as! MoviesTableViewCell
         let index = indexPath.row
         let movie = movies?[index]
-            if let posterPath = movie?["poster_path"] as? String {
-                let baseUrl = "http://image.tmdb.org/t/p/w500"
-                let imageURL = URL(string: baseUrl + posterPath)
-                cell.titleImage.setImageWith(imageURL!)
-            }
-        cell.titleLabel.text = movie?["original_title"] as? String
-        cell.localizedName.text = movie?["title"] as? String
+        
+        if let posterPath = movie?["poster_path"] as? String {
+            let baseUrl = "http://image.tmdb.org/t/p/w500"
+            let imageURL = URL(string: baseUrl + posterPath)
+            cell.titleImage.setImageWith(imageURL!)
+        }
+        
         let rating = "\(String(describing: movie?["vote_average"] as! Double))/10"
         cell.rating.text = rating
-        cell.ratingStars.rating = movie?["vote_average"] as! Double
+        cell.titleLabel.text = movie?["original_title"] as? String
+        cell.localizedName.text = movie?["title"] as? String
+        cell.ratingStars.rating = (movie?["vote_average"] as! Double)/2
+        
         return cell
     }
     
@@ -66,40 +74,39 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let apiKey = "55580621b06134aae72c3266c0fed8bf"
         if let url = URL(string:"https://api.themoviedb.org/3/movie/\(filter)?api_key=\(apiKey)&page=\(page)&language=\(langStr!)") {
        
-        let request = URLRequest(url: url)
-        
-        let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
-        
-        let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
-            if let data = dataOrNil {
-                if let responseDictionary = try! JSONSerialization.jsonObject(
-                    with: data, options:[]) as? NSDictionary {
-                    self.movies = responseDictionary["results"] as? [NSDictionary]
-                    self.tableView.reloadData()
-                    SwiftSpinner.hide()
-                    print("\(responseDictionary)")
-
+            let request = URLRequest(url: url)
+            
+            let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
+            
+            let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
+                if let data = dataOrNil {
+                    if let responseDictionary = try! JSONSerialization.jsonObject( with: data, options:[]) as? NSDictionary {
+                        self.movies = responseDictionary["results"] as? [NSDictionary]
+                        self.tableView.reloadData()
+                        SwiftSpinner.hide()
+                    }
                 }
-            }
-        })
+            })
         task.resume()
         }
     }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as UIViewController
         if segue.identifier == "movie" {
-            destinationVC.title = "Movie Details"
             let cell = sender as! MoviesTableViewCell
             let indexPath = tableView.indexPath(for: cell)
             let movie = movies![indexPath!.row]
             let detailsViewController = destinationVC as! MovieDetailsViewController
             detailsViewController.selectedMovie = movie
-            
         }
     }
 
     @IBAction func showPopular(_ sender: UIButton) {
         SwiftSpinner.show("Loadings movies")
+        popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         pageNumber = 1
         movieFilter = "popular"
         fetchRequest(filter: movieFilter, page: pageNumber)
@@ -107,7 +114,11 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         topRatedPressed = false
         nowPlayingPressed = false
     }
+    
     @IBAction func showTopRated(_ sender: UIButton) {
+        popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         SwiftSpinner.show("Loadings movies")
         pageNumber = 1
         movieFilter = "top_rated"
@@ -116,7 +127,11 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         topRatedPressed = true
         nowPlayingPressed = false
     }
+    
     @IBAction func showNowPlaying(_ sender: UIButton) {
+        popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         SwiftSpinner.show("Loadings movies")
         pageNumber = 1
         movieFilter = "now_playing"

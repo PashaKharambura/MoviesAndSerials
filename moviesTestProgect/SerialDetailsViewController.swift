@@ -8,13 +8,16 @@
 
 import UIKit
 import AFNetworking
-
+import Cosmos
 
 class SerialDetailsViewController: UIViewController {
     
-    @IBOutlet weak var posterImage: UIImageView!
-    @IBOutlet weak var titleNameLabe: UILabel!
-    @IBOutlet weak var detailsText: UITextView!
+    @IBOutlet weak var posterImage:     UIImageView!
+    @IBOutlet weak var titleNameLabe:   UILabel!
+    @IBOutlet weak var releaseDate:     UILabel!
+    @IBOutlet weak var voteAverage:     UILabel!
+    @IBOutlet weak var starsView:       CosmosView!
+    @IBOutlet weak var descriptionText: UITextView!
 
     var selectedSerial: NSDictionary!
     var imageUrl: String = ""
@@ -22,23 +25,22 @@ class SerialDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let name = selectedSerial["original_name"] as! String
-        titleNameLabe.text = name
-        
-//        let details = selectedSerial["overview"] as! String
-//        
-//        detailsText.text = details
-        
+        let title = selectedSerial["original_name"] as! String
+        titleNameLabe.text = title
+        descriptionText.text = selectedSerial["overview"] as! String
+        releaseDate.text = selectedSerial["first_air_date"] as? String
+        voteAverage.text = "\(selectedSerial["vote_average"] as! Double)"
+        starsView.rating = selectedSerial?["vote_average"] as! Double
         if let posterPath = selectedSerial["poster_path"] as? String {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
-            if let imageURL = URL(string: baseUrl + posterPath) {
+            if  let imageURL = URL(string: baseUrl + posterPath) {
                 posterImage.setImageWith(imageURL)
                 imageUrl = "\(String(describing: imageURL))"
             }
         }
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+    override var preferredStatusBarStyle: UIStatusBarStyle { 
         return .lightContent
     }
     
@@ -50,8 +52,6 @@ class SerialDetailsViewController: UIViewController {
         task.rating = selectedSerial["vote_average"] as! Double
         task.url = imageUrl
         task.localName = selectedSerial["name"] as? String
-        
-
         
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
         let _ = navigationController?.popViewController(animated: true)

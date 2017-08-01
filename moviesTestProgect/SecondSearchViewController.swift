@@ -12,22 +12,25 @@ import AFNetworking
 class SecondSearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
     @IBOutlet weak var mySearchBar: UISearchBar!
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView:   UITableView!
     
     fileprivate var pageNumber: Int = 1
+    
     var movies: [NSDictionary]?
     var searchText: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.dataSource = self
         tableView.delegate = self
         mySearchBar.delegate = self
         mySearchBar.returnKeyType = UIReturnKeyType.done
         mySearchBar.becomeFirstResponder()
+        
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+    override var preferredStatusBarStyle: UIStatusBarStyle { 
         return .lightContent
     }
     
@@ -39,16 +42,18 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
         let cell = tableView.dequeueReusableCell(withIdentifier: "movieSearchCell") as! SecondSearchTableViewCell
         let index = indexPath.row
         let movie = movies?[index]
+        
         if let posterPath = movie?["poster_path"] as? String {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
             let imageURL = URL(string: baseUrl + posterPath)
             cell.titleImage.setImageWith(imageURL!)
         }
+        
         let rating = "\(String(describing: movie?["vote_average"] as! Double))/10"
         cell.rating.text = rating
         cell.titleLabel.text = movie?["original_title"] as? String
         cell.localizedName.text = movie?["original_title"] as? String
-        cell.ratingStars.rating = movie?["vote_average"] as! Double
+        cell.ratingStars.rating = (movie?["vote_average"] as! Double)/2
         
         return cell
     }
@@ -56,20 +61,16 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as UIViewController
         if segue.identifier == "movieSearch" {
-            destinationVC.title = "Movie Details"
-            
             let cell = sender as! SecondSearchTableViewCell
             let indexPath = tableView.indexPath(for: cell)
-            
             let movie = movies![indexPath!.row]
-            
             let detailsViewController = destinationVC as! MovieDetailsViewController
             detailsViewController.selectedMovie = movie
-            
         }
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        SwiftSpinner.show("Loading films")
         let mySearchString = "\(String(describing: searchBar.text!))"
         searchText = mySearchString
         fetchRequest(query: mySearchString, page: pageNumber)
@@ -86,7 +87,6 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
     }
-    
     
     @IBAction func previousPage(_ sender: UIButton) {
         if pageNumber != 1 {
@@ -125,7 +125,6 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
                     }
                 }
             })
-       
         task.resume()
         }
     }

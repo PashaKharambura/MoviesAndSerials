@@ -14,23 +14,30 @@ public let langStr = Locale.current.languageCode
 class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var popularButton: UIButton!
+    @IBOutlet weak var topRatedBitton: UIButton!
+    @IBOutlet weak var nowPlaying: UIButton!
     
-    fileprivate var popularPressed:Bool = true
-    fileprivate var topRatedPressed:Bool = true
-    fileprivate var nowPlayingPressed:Bool = true
-    fileprivate var serialFilter = "popular"
-    fileprivate var pageNumber: Int = 1
+    fileprivate var popularPressed:Bool     = true
+    fileprivate var topRatedPressed:Bool    = true
+    fileprivate var nowPlayingPressed:Bool  = true
+    fileprivate var serialFilter            = "popular"
+    fileprivate var pageNumber: Int         = 1
+    
     var serials: [NSDictionary]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.dataSource = self
         tableView.delegate = self
         SwiftSpinner.show("Loading serials")
         fetchRequest(filter: serialFilter, page: pageNumber)
+        popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 
@@ -47,39 +54,40 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: "SerialCell") as! SerialsTableViewCell
         let index = indexPath.row
         let serial = serials?[index]
-            if let posterPath = serial?["poster_path"] as? String {
-                let baseUrl = "http://image.tmdb.org/t/p/w500"
-                let imageURL = URL(string: baseUrl + posterPath)
-                cell.titleImage.setImageWith(imageURL!)
-            }
+        
+        if let posterPath = serial?["poster_path"] as? String {
+            let baseUrl = "http://image.tmdb.org/t/p/w500"
+            let imageURL = URL(string: baseUrl + posterPath)
+            cell.titleImage.setImageWith(imageURL!)
+        }
+        
         let rating = "\(String(describing: serial?["vote_average"] as! Double))/10"
         cell.rating.text = rating
         cell.titleLabel.text = serial?["original_name"] as? String
-        
         cell.localizedName.text = "(\(serial?["name"] as! String))"
-        cell.ratingStars.rating = serial?["vote_average"] as! Double
+        cell.ratingStars.rating = (serial?["vote_average"] as! Double)/2
+        
         return cell
     }
 
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as UIViewController
         if segue.identifier == "serial" {
-            destinationVC.title = "Serial Details"
-
             let cell = sender as! SerialsTableViewCell
             let indexPath = tableView.indexPath(for: cell)
-            
             let serial = serials![indexPath!.row]
-            
             let detailsViewController = destinationVC as! SerialDetailsViewController
             detailsViewController.selectedSerial = serial
-            
         }
     }
     
     @IBAction func showPopular(_ sender: UIButton) {
         pageNumber = 1
+        
+        popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        
         serialFilter = "popular"
         SwiftSpinner.show("Loading serials")
         fetchRequest(filter: serialFilter, page: pageNumber)
@@ -89,6 +97,11 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     @IBAction func showTopRated(_ sender: UIButton) {
+        
+        popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        
         pageNumber = 1
         serialFilter = "top_rated"
         SwiftSpinner.show("Loading serials")
@@ -99,6 +112,11 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     @IBAction func showNowPlaying(_ sender: UIButton) {
+        
+        popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        
         pageNumber = 1
         serialFilter = "airing_today"
         SwiftSpinner.show("Loading serials")
@@ -139,8 +157,7 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     fileprivate func fetchRequest(filter: String, page: Int) {
-        
-        
+
         let apiKey = "55580621b06134aae72c3266c0fed8bf"  
         if let url = URL(string:"https://api.themoviedb.org/3/tv/\(filter)?api_key=\(apiKey)&page=\(page)&language=\(langStr!)") {
 
@@ -153,10 +170,8 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
                     if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
                         self.serials = responseDictionary["results"] as? [NSDictionary]
                         self.tableView.reloadData()
-                        print("\(responseDictionary)")
                         SwiftSpinner.hide()
                     }
-                    
                 }
             })
             task.resume()

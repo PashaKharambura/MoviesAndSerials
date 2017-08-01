@@ -12,19 +12,20 @@ import AFNetworking
 class FavouriteViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var favouriteItems: [Movie]?
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     @IBOutlet weak var tableView: UITableView!
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.dataSource = self
         tableView.delegate = self
-        // Do any additional setup after loading the view.
+
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+    override var preferredStatusBarStyle: UIStatusBarStyle { 
         return .lightContent
     }
     
@@ -44,9 +45,9 @@ class FavouriteViewController: UIViewController, UITableViewDelegate, UITableVie
             }
             cell.titleLabel.text = item?.title
             cell.localizedName.text = item?.title
-            let rating = item?.rating
-            cell.rating.text = "\(String(describing: rating!))"
-            cell.ratingStars.rating = rating!
+            let rating = (item?.rating)!
+            cell.rating.text = "\(String(describing: rating))"
+            cell.ratingStars.rating = rating/2
             
             return cell
         }

@@ -17,6 +17,7 @@ class SerialDetailsViewController: UIViewController {
     @IBOutlet weak var detailsText: UITextView!
 
     var selectedSerial: NSDictionary!
+    var imageUrl: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,21 +31,27 @@ class SerialDetailsViewController: UIViewController {
         
         if let posterPath = selectedSerial["poster_path"] as? String {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
-            let imageURL = URL(string: baseUrl + posterPath)
-            posterImage.setImageWith(imageURL!)
+            if let imageURL = URL(string: baseUrl + posterPath) {
+                posterImage.setImageWith(imageURL)
+                imageUrl = "\(String(describing: imageURL))"
+            }
         }
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+        return .lightContent
+    }
+    
     @IBAction func addToFavourite(_ sender: UIButton) {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
         let task = Movie(context: context)
         task.title = selectedSerial["original_name"] as? String
         task.rating = selectedSerial["vote_average"] as! Double
-        
+        task.url = imageUrl
         task.localName = selectedSerial["name"] as? String
         
-        // Save the data to coredata
+
         
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
         let _ = navigationController?.popViewController(animated: true)

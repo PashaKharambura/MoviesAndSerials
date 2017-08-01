@@ -31,7 +31,9 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         fetchRequest(filter: movieFilter, page: pageNumber)
     }
  
-    
+    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+        return .lightContent
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

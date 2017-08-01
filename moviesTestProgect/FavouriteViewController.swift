@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AFNetworking
 
 class FavouriteViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -23,22 +24,32 @@ class FavouriteViewController: UIViewController, UITableViewDelegate, UITableVie
         // Do any additional setup after loading the view.
     }
 
-
+    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+        return .lightContent
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return favouriteItems?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "favouriteCell") as! FavouriteTableViewCell
         let index = indexPath.row
-        let item = favouriteItems?[index]
-
-        cell.titleLabel.text = item?.title
-        cell.localizedName.text = item?.title
-        let rating = item?.rating
-        cell.rating.text = "\(String(describing: rating!))"
-        cell.ratingStars.rating = rating!
-        
+        if favouriteItems?.count != 0 {
+            let item = favouriteItems?[index]
+            
+            if let imageUrl = URL(string: (item?.url)!) {
+            cell.titleImage.setImageWith(imageUrl)
+            }
+            cell.titleLabel.text = item?.title
+            cell.localizedName.text = item?.title
+            let rating = item?.rating
+            cell.rating.text = "\(String(describing: rating!))"
+            cell.ratingStars.rating = rating!
+            
+            return cell
+        }
         return cell
     }
 

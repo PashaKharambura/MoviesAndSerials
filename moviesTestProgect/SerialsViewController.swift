@@ -29,6 +29,10 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
         SwiftSpinner.show("Loading serials")
         fetchRequest(filter: serialFilter, page: pageNumber)
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+        return .lightContent
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

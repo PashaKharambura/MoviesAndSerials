@@ -27,6 +27,10 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         mySearchBar.becomeFirstResponder()
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+        return .lightContent
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return serials?.count ?? 0
     }

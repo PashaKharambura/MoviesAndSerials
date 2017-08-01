@@ -27,6 +27,10 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
         mySearchBar.becomeFirstResponder()
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle { // когда создавать а когда оверрайдить переменную
+        return .lightContent
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return movies?.count ?? 0
     }

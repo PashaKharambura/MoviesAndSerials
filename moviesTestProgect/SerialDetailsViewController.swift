@@ -35,6 +35,21 @@ class SerialDetailsViewController: UIViewController {
         }
     }
 
+    @IBAction func addToFavourite(_ sender: UIButton) {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        let task = Movie(context: context)
+        task.title = selectedSerial["original_name"] as? String
+        task.rating = selectedSerial["vote_average"] as! Double
+        
+        task.localName = selectedSerial["name"] as? String
+        
+        // Save the data to coredata
+        
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
+        let _ = navigationController?.popViewController(animated: true)
+    }
+    
     @IBAction func goBack(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }

@@ -20,6 +20,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     fileprivate var pageNumber: Int = 1
     fileprivate var lastPage: Bool = false
     
+
     var movies: [NSDictionary]?
     
     override func viewDidLoad() {
@@ -30,6 +31,8 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         fetchRequest(filter: movieFilter, page: pageNumber)
     }
  
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)

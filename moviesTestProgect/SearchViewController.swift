@@ -89,8 +89,6 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         self.view.endEditing(true)
     }
     
-
-    
     @IBAction func previousPage(_ sender: UIButton) {
         if pageNumber != 1 {
             pageNumber += -1
@@ -121,13 +119,22 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     if let data = dataOrNil {
                         if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
                             self.serials = responseDictionary["results"] as? [NSDictionary]
-                            print("\(responseDictionary)")
+                            if self.serials! == [] {
+                                SwiftSpinner.hide()
+                                AlertDialog.showAlert("Error", message: "No serials for your input", viewController: self)
+
+                            } else {
                             self.tableView.reloadData()
                             SwiftSpinner.hide()
+                            }
                         }
                     }
                 })
             task.resume()
+            } else {
+                SwiftSpinner.hide()
+                AlertDialog.showAlert("Error", message: "No serials for your input", viewController: self)
+
             }
         } else {
             SwiftSpinner.hide()

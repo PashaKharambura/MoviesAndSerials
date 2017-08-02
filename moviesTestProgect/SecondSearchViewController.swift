@@ -120,14 +120,22 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
                     if let data = dataOrNil {
                         if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
                             self.movies = responseDictionary["results"] as? [NSDictionary]
-                            print("\(responseDictionary)")
-
-                            self.tableView.reloadData()
-                            SwiftSpinner.hide()
+                            if self.movies! == [] {
+                                SwiftSpinner.hide()
+                                AlertDialog.showAlert("Error", message: "No movies for your input", viewController: self)
+                                
+                            } else {
+                                self.tableView.reloadData()
+                                SwiftSpinner.hide()
+                            }
                         }
                     }
                 })
             task.resume()
+            } else {
+                SwiftSpinner.hide()
+                AlertDialog.showAlert("Error", message: "No movies for your input", viewController: self)
+                
             }
         } else {
             SwiftSpinner.hide()

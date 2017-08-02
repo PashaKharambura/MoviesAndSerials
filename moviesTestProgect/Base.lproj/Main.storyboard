@@ -598,6 +598,7 @@
                                                                     <userDefinedRuntimeAttribute type="number" keyPath="rating">
                                                                         <real key="value" value="5.5"/>
                                                                     </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="updateOnTouch" value="NO"/>
                                                                 </userDefinedRuntimeAttributes>
                                                             </view>
                                                         </subviews>
@@ -1426,7 +1427,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Zpc-gf-agV" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1641" y="45"/>
+            <point key="canvasLocation" x="1641" y="87"/>
         </scene>
         <!--Movies-->
         <scene sceneID="h9z-jN-VlA">
@@ -1448,7 +1449,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cQz-qh-jbA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="798" y="767"/>
+            <point key="canvasLocation" x="374" y="767"/>
         </scene>
         <!--Serial Details View Controller-->
         <scene sceneID="Fnf-h7-neo">
@@ -1560,6 +1561,7 @@
                                                                     <userDefinedRuntimeAttribute type="number" keyPath="rating">
                                                                         <real key="value" value="5.5"/>
                                                                     </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="updateOnTouch" value="NO"/>
                                                                 </userDefinedRuntimeAttributes>
                                                             </view>
                                                         </subviews>
@@ -1643,7 +1645,7 @@
         <image name="tv" width="30" height="22"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="oem-qv-6i0"/>
+        <segue reference="mch-B4-jIN"/>
         <segue reference="n4F-xy-4q0"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -8,6 +8,7 @@
 
 import UIKit
 import AFNetworking
+import SystemConfiguration
 
 class SecondSearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
@@ -105,27 +106,33 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
     
     fileprivate func fetchRequest(query:String, page: Int) {
         
-        let newQuery = query.replacingOccurrences(of: " ", with: "+")
-        let apiKey = "55580621b06134aae72c3266c0fed8bf"
-        
-        if let url = URL(string:"https://api.themoviedb.org/3/search/movie?api_key=\(apiKey)&query=\(newQuery)&page=\(page)&language=\(langStr!)") {
- 
-            let request = URLRequest(url: url)
+        if Reachability.isConnectedToNetwork() == true {
+            let newQuery = query.replacingOccurrences(of: " ", with: "+")
+            let apiKey = "55580621b06134aae72c3266c0fed8bf"
             
-            let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
-            
-            let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
-                if let data = dataOrNil {
-                    if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
-                        self.movies = responseDictionary["results"] as? [NSDictionary]
-                        print("\(responseDictionary)")
+            if let url = URL(string:"https://api.themoviedb.org/3/search/movie?api_key=\(apiKey)&query=\(newQuery)&page=\(page)&language=\(langStr!)") {
+     
+                let request = URLRequest(url: url)
+                
+                let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
+                
+                let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
+                    if let data = dataOrNil {
+                        if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
+                            self.movies = responseDictionary["results"] as? [NSDictionary]
+                            print("\(responseDictionary)")
 
-                        self.tableView.reloadData()
-                        SwiftSpinner.hide()
+                            self.tableView.reloadData()
+                            SwiftSpinner.hide()
+                        }
                     }
-                }
-            })
-        task.resume()
+                })
+            task.resume()
+            }
+        } else {
+            SwiftSpinner.hide()
+            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
+
         }
     }
     

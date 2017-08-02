@@ -8,6 +8,7 @@
 
 import UIKit
 import AFNetworking
+import SystemConfiguration
 
 class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -71,23 +72,29 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     fileprivate  func fetchRequest(filter: String, page: Int) {
         
-        let apiKey = "55580621b06134aae72c3266c0fed8bf"
-        if let url = URL(string:"https://api.themoviedb.org/3/movie/\(filter)?api_key=\(apiKey)&page=\(page)&language=\(langStr!)") {
-       
-            let request = URLRequest(url: url)
-            
-            let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
-            
-            let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
-                if let data = dataOrNil {
-                    if let responseDictionary = try! JSONSerialization.jsonObject( with: data, options:[]) as? NSDictionary {
-                        self.movies = responseDictionary["results"] as? [NSDictionary]
-                        self.tableView.reloadData()
-                        SwiftSpinner.hide()
+        if Reachability.isConnectedToNetwork() == true {
+            let apiKey = "55580621b06134aae72c3266c0fed8bf"
+            if let url = URL(string:"https://api.themoviedb.org/3/movie/\(filter)?api_key=\(apiKey)&page=\(page)&language=\(langStr!)") {
+           
+                let request = URLRequest(url: url)
+                
+                let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
+                
+                let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
+                    if let data = dataOrNil {
+                        if let responseDictionary = try! JSONSerialization.jsonObject( with: data, options:[]) as? NSDictionary {
+                            self.movies = responseDictionary["results"] as? [NSDictionary]
+                            self.tableView.reloadData()
+                            SwiftSpinner.hide()
+                        }
                     }
-                }
-            })
-        task.resume()
+                })
+            task.resume()
+            }
+        } else {
+            SwiftSpinner.hide()
+            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
+
         }
     }
     

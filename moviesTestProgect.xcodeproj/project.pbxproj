@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		291846DD1F31635B00CD0B72 /* Alert Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 291846DC1F31635B00CD0B72 /* Alert Message.swift */; };
 		296666AD1F308E67005F8625 /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 296666AB1F308E66005F8625 /* CoreData.xcdatamodeld */; };
 		297960FF1F2F77FE006CC0B4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297960FE1F2F77FE006CC0B4 /* AppDelegate.swift */; };
 		297961011F2F77FE006CC0B4 /* MoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297961001F2F77FE006CC0B4 /* MoviesViewController.swift */; };
@@ -20,7 +21,7 @@
 		2979611F1F2F95AD006CC0B4 /* SerialDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2979611E1F2F95AD006CC0B4 /* SerialDetailsViewController.swift */; };
 		298EEA8E1F3097E900F220CE /* FavouriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298EEA8D1F3097E900F220CE /* FavouriteViewController.swift */; };
 		298EEA901F3097F800F220CE /* FavouriteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298EEA8F1F3097F800F220CE /* FavouriteTableViewCell.swift */; };
-		29AD52B61F2FAFD2003D333E /* loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD52B51F2FAFD2003D333E /* loading.swift */; };
+		29AD52B61F2FAFD2003D333E /* loading + sheckingForConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD52B51F2FAFD2003D333E /* loading + sheckingForConnection.swift */; };
 		29AD52BA1F2FDC6B003D333E /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD52B91F2FDC6B003D333E /* SearchViewController.swift */; };
 		29AD52BC1F2FE0C5003D333E /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD52BB1F2FE0C5003D333E /* SearchTableViewCell.swift */; };
 		29AD52BE1F2FF050003D333E /* SecondSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD52BD1F2FF050003D333E /* SecondSearchViewController.swift */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		108CBAA0072D17690F692AFD /* Pods_moviesTestProgect.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_moviesTestProgect.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		291846DC1F31635B00CD0B72 /* Alert Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Alert Message.swift"; sourceTree = "<group>"; };
 		296666AC1F308E67005F8625 /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
 		297960FB1F2F77FE006CC0B4 /* moviesTestProgect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = moviesTestProgect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		297960FE1F2F77FE006CC0B4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = moviesTestProgect/AppDelegate.swift; sourceTree = "<group>"; };
@@ -45,7 +47,7 @@
 		2979611E1F2F95AD006CC0B4 /* SerialDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialDetailsViewController.swift; sourceTree = "<group>"; };
 		298EEA8D1F3097E900F220CE /* FavouriteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouriteViewController.swift; sourceTree = "<group>"; };
 		298EEA8F1F3097F800F220CE /* FavouriteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouriteTableViewCell.swift; sourceTree = "<group>"; };
-		29AD52B51F2FAFD2003D333E /* loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = loading.swift; path = moviesTestProgect/loading.swift; sourceTree = "<group>"; };
+		29AD52B51F2FAFD2003D333E /* loading + sheckingForConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "loading + sheckingForConnection.swift"; path = "moviesTestProgect/loading + sheckingForConnection.swift"; sourceTree = "<group>"; };
 		29AD52B91F2FDC6B003D333E /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		29AD52BB1F2FE0C5003D333E /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchTableViewCell.swift; path = Assets.xcassets/SearchTableViewCell.swift; sourceTree = "<group>"; };
 		29AD52BD1F2FF050003D333E /* SecondSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecondSearchViewController.swift; sourceTree = "<group>"; };
@@ -126,7 +128,8 @@
 			children = (
 				296666AB1F308E66005F8625 /* CoreData.xcdatamodeld */,
 				297960FE1F2F77FE006CC0B4 /* AppDelegate.swift */,
-				29AD52B51F2FAFD2003D333E /* loading.swift */,
+				29AD52B51F2FAFD2003D333E /* loading + sheckingForConnection.swift */,
+				291846DC1F31635B00CD0B72 /* Alert Message.swift */,
 				297961071F2F77FE006CC0B4 /* Assets.xcassets */,
 				297961091F2F77FE006CC0B4 /* LaunchScreen.storyboard */,
 				2979610C1F2F77FE006CC0B4 /* Info.plist */,
@@ -286,7 +289,8 @@
 				29AD52BE1F2FF050003D333E /* SecondSearchViewController.swift in Sources */,
 				2979611D1F2F8D41006CC0B4 /* MoviesTableViewCell.swift in Sources */,
 				297961191F2F8BCF006CC0B4 /* MovieDetailsViewController.swift in Sources */,
-				29AD52B61F2FAFD2003D333E /* loading.swift in Sources */,
+				29AD52B61F2FAFD2003D333E /* loading + sheckingForConnection.swift in Sources */,
+				291846DD1F31635B00CD0B72 /* Alert Message.swift in Sources */,
 				2979611F1F2F95AD006CC0B4 /* SerialDetailsViewController.swift in Sources */,
 				29AD52BC1F2FE0C5003D333E /* SearchTableViewCell.swift in Sources */,
 				298EEA901F3097F800F220CE /* FavouriteTableViewCell.swift in Sources */,

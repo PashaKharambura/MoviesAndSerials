@@ -19,19 +19,19 @@ class SerialDetailsViewController: UIViewController {
     @IBOutlet weak var starsView:       CosmosView!
     @IBOutlet weak var descriptionText: UITextView!
 
-    var selectedSerial: NSDictionary!
+    var selectedSerial: SerialsVO!
     var imageUrl: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let title = selectedSerial["original_name"] as! String
+        let title = selectedSerial.originalName
         titleNameLabe.text = title
-        descriptionText.text = selectedSerial["overview"] as! String
-        releaseDate.text = selectedSerial["first_air_date"] as? String
-        voteAverage.text = "\(selectedSerial["vote_average"] as! Double)"
-        starsView.rating = selectedSerial?["vote_average"] as! Double
-        if let posterPath = selectedSerial["poster_path"] as? String {
+        descriptionText.text = selectedSerial.overview
+        releaseDate.text = selectedSerial.firstAirDate
+        voteAverage.text = "\(String(describing: selectedSerial.voteAverage))"
+        starsView.rating = (selectedSerial?.voteAverage)!
+        if let posterPath = selectedSerial.posterPath{
             let baseUrl = "http://image.tmdb.org/t/p/w500"
             if  let imageURL = URL(string: baseUrl + posterPath) {
                 posterImage.setImageWith(imageURL)
@@ -48,10 +48,10 @@ class SerialDetailsViewController: UIViewController {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
         let task = Movie(context: context)
-        task.title = selectedSerial["original_name"] as? String
-        task.rating = selectedSerial["vote_average"] as! Double
+        task.title = selectedSerial.originalName
+        task.rating = selectedSerial.voteAverage!
         task.url = imageUrl
-        task.localName = selectedSerial["name"] as? String
+        task.localName = selectedSerial.name
         
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
         let _ = navigationController?.popViewController(animated: true)

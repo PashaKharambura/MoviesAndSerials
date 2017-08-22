@@ -10,7 +10,6 @@ import UIKit
 import AFNetworking
 import SystemConfiguration
 
-public let langStr = Locale.current.languageCode
 
 class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -25,7 +24,7 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
     fileprivate var serialFilter            = "popular"
     fileprivate var pageNumber: Int         = 1
     
-    var serials: [NSDictionary]?
+    var serials: [SerialsVO]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +32,8 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.dataSource = self
         tableView.delegate = self
         SwiftSpinner.show("Loading serials")
-        fetchRequest(filter: serialFilter, page: pageNumber)
+        SerialsModel.instance.loadPopularSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+        SwiftSpinner.hide()
         popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         
     }
@@ -56,17 +56,17 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
         let index = indexPath.row
         let serial = serials?[index]
         
-        if let posterPath = serial?["poster_path"] as? String {
+        if let posterPath = serial?.posterPath {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
             let imageURL = URL(string: baseUrl + posterPath)
             cell.titleImage.setImageWith(imageURL!)
         }
         
-        let rating = "\(String(describing: serial?["vote_average"] as! Double))/10"
+        let rating = "\(String(describing: serial?.voteAverage))/10"
         cell.rating.text = rating
-        cell.titleLabel.text = serial?["original_name"] as? String
-        cell.localizedName.text = "(\(serial?["name"] as! String))"
-        cell.ratingStars.rating = (serial?["vote_average"] as! Double)/2
+        cell.titleLabel.text = serial?.originalName
+        cell.localizedName.text = "(\(String(describing: serial?.name)))"
+        cell.ratingStars.rating = (serial?.voteAverage)!/2
         
         return cell
     }
@@ -89,39 +89,42 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
         topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         
-        serialFilter = "popular"
         SwiftSpinner.show("Loading serials")
-        fetchRequest(filter: serialFilter, page: pageNumber)
+        SerialsModel.instance.loadPopularSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+        SwiftSpinner.hide()
+        
         popularPressed = true
         topRatedPressed = false
         nowPlayingPressed = false
     }
     
     @IBAction func showTopRated(_ sender: UIButton) {
-        
+        pageNumber = 1
+
         popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         
-        pageNumber = 1
-        serialFilter = "top_rated"
         SwiftSpinner.show("Loading serials")
-        fetchRequest(filter: serialFilter, page: pageNumber)
+        SerialsModel.instance.loadTOpRatedSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+        SwiftSpinner.hide()
+        
         popularPressed = false
         topRatedPressed = true
         nowPlayingPressed = false
     }
     
     @IBAction func showNowPlaying(_ sender: UIButton) {
-        
+        pageNumber = 1
+
         popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         
-        pageNumber = 1
-        serialFilter = "airing_today"
         SwiftSpinner.show("Loading serials")
-        fetchRequest(filter: serialFilter, page: pageNumber)
+        SerialsModel.instance.loadNowPlayingSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+        SwiftSpinner.hide()
+
         popularPressed = false
         topRatedPressed = false
         nowPlayingPressed = true
@@ -132,13 +135,13 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
             pageNumber += 1
             SwiftSpinner.show("Loading serials")
             if popularPressed {
-                serialFilter = "popular"
+                SerialsModel.instance.loadPopularSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
             } else if topRatedPressed {
-                serialFilter = "top_rated"
+                SerialsModel.instance.loadTOpRatedSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
             } else {
-                serialFilter = "airing_today"
+                SerialsModel.instance.loadNowPlayingSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+
             }
-            fetchRequest(filter: serialFilter, page: pageNumber)
         }
     }
 
@@ -148,41 +151,17 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
             SwiftSpinner.show("Loading serials")
             if popularPressed {
                 serialFilter = "popular"
+                SerialsModel.instance.loadPopularSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+
             } else if topRatedPressed {
                 serialFilter = "top_rated"
+                SerialsModel.instance.loadTOpRatedSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+
             } else {
                 serialFilter = "airing_today"
+                SerialsModel.instance.loadNowPlayingSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+
             }
-            fetchRequest(filter: serialFilter, page: pageNumber)
-        }
-    }
-    
-    fileprivate func fetchRequest(filter: String, page: Int) {
-
-        if Reachability.isConnectedToNetwork() == true {
-            
-            let apiKey = "55580621b06134aae72c3266c0fed8bf"
-            if let url = URL(string:"https://api.themoviedb.org/3/tv/\(filter)?api_key=\(apiKey)&page=\(page)&language=\(langStr!)") {
-
-                let request = URLRequest(url: url)
-                
-                let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
-                
-                let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
-                    if let data = dataOrNil {
-                        if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
-                            self.serials = responseDictionary["results"] as? [NSDictionary]
-                            self.tableView.reloadData()
-                            SwiftSpinner.hide()
-                        }
-                    }
-                })
-                task.resume()
-            }
-        } else {
-            SwiftSpinner.hide()
-            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
-
         }
     }
 }

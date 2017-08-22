@@ -11,7 +11,7 @@ import AFNetworking
 import SystemConfiguration
 
 
-class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class SerialsViewController: MyViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var popularButton: UIButton!
@@ -21,8 +21,7 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
     fileprivate var popularPressed:Bool     = true
     fileprivate var topRatedPressed:Bool    = true
     fileprivate var nowPlayingPressed:Bool  = true
-    fileprivate var serialFilter            = "popular"
-    fileprivate var pageNumber: Int         = 1
+    fileprivate var pageNumber              = 1
     
     var serials: [SerialsVO]?
     
@@ -32,20 +31,18 @@ class SerialsViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.dataSource = self
         tableView.delegate = self
         SwiftSpinner.show("Loading serials")
+        if Reachability.isConnectedToNetwork() == true {
         SerialsModel.instance.loadPopularSerials(page: pageNumber, serialsLoaded: tableView.reloadData)
+        } else {
+            SerialsModel.instance.setSerials(serials: [])
+            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
+
+        }
         SwiftSpinner.hide()
         popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         
     }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
-    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return SerialsModel.instance.serials?.count ?? 0

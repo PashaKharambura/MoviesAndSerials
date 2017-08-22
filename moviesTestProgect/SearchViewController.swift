@@ -10,12 +10,12 @@ import UIKit
 import AFNetworking
 import SystemConfiguration
 
-class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class SearchViewController: MyViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
     @IBOutlet weak var mySearchBar: UISearchBar!
     @IBOutlet weak var tableView:   UITableView!
     
-    fileprivate var pageNumber: Int = 1
+    fileprivate var pageNumber = 1
 
     var searchText: String?
     
@@ -28,11 +28,9 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         mySearchBar.delegate = self
         mySearchBar.returnKeyType = UIReturnKeyType.done
         mySearchBar.becomeFirstResponder()
-        
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle { 
-        return .lightContent
+        if Reachability.isConnectedToNetwork() == false {
+            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

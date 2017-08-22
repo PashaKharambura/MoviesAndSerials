@@ -26,6 +26,7 @@
 		29AD52BC1F2FE0C5003D333E /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD52BB1F2FE0C5003D333E /* SearchTableViewCell.swift */; };
 		29AD52BE1F2FF050003D333E /* SecondSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD52BD1F2FF050003D333E /* SecondSearchViewController.swift */; };
 		29AD52C01F2FF062003D333E /* SecondSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD52BF1F2FF062003D333E /* SecondSearchTableViewCell.swift */; };
+		29DFD7C41F4CE27700106D4C /* MyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29DFD7C31F4CE27700106D4C /* MyViewController.swift */; };
 		29EDC0F11F4C42F10050392C /* MoviesVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29EDC0F01F4C42F10050392C /* MoviesVO.swift */; };
 		29EDC0F31F4C42FD0050392C /* SerialsVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29EDC0F21F4C42FD0050392C /* SerialsVO.swift */; };
 		29EDC0F61F4C48600050392C /* Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29EDC0F51F4C48600050392C /* Download.swift */; };
@@ -57,6 +58,7 @@
 		29AD52BB1F2FE0C5003D333E /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchTableViewCell.swift; path = Assets.xcassets/SearchTableViewCell.swift; sourceTree = "<group>"; };
 		29AD52BD1F2FF050003D333E /* SecondSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecondSearchViewController.swift; sourceTree = "<group>"; };
 		29AD52BF1F2FF062003D333E /* SecondSearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecondSearchTableViewCell.swift; sourceTree = "<group>"; };
+		29DFD7C31F4CE27700106D4C /* MyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MyViewController.swift; path = moviesTestProgect/MyViewController.swift; sourceTree = "<group>"; };
 		29EDC0F01F4C42F10050392C /* MoviesVO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoviesVO.swift; sourceTree = "<group>"; };
 		29EDC0F21F4C42FD0050392C /* SerialsVO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialsVO.swift; sourceTree = "<group>"; };
 		29EDC0F51F4C48600050392C /* Download.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Download.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			children = (
 				296666AB1F308E66005F8625 /* CoreData.xcdatamodeld */,
 				297960FE1F2F77FE006CC0B4 /* AppDelegate.swift */,
+				29DFD7C31F4CE27700106D4C /* MyViewController.swift */,
 				29AD52B51F2FAFD2003D333E /* loading + sheckingForConnection.swift */,
 				291846DC1F31635B00CD0B72 /* Alert Message.swift */,
 				297961071F2F77FE006CC0B4 /* Assets.xcassets */,
@@ -338,6 +341,7 @@
 				297960FF1F2F77FE006CC0B4 /* AppDelegate.swift in Sources */,
 				297961151F2F7907006CC0B4 /* SerialsTableViewCell.swift in Sources */,
 				296666AD1F308E67005F8625 /* CoreData.xcdatamodeld in Sources */,
+				29DFD7C41F4CE27700106D4C /* MyViewController.swift in Sources */,
 				298EEA8E1F3097E900F220CE /* FavouriteViewController.swift in Sources */,
 				29EDC0F31F4C42FD0050392C /* SerialsVO.swift in Sources */,
 				29AD52BA1F2FDC6B003D333E /* SearchViewController.swift in Sources */,

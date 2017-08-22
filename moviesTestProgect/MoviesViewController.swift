@@ -10,7 +10,7 @@ import UIKit
 import AFNetworking
 import SystemConfiguration
 
-class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MoviesViewController: MyViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var popularButton: UIButton!
@@ -20,8 +20,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     fileprivate var popularPressed:Bool     = true
     fileprivate var topRatedPressed:Bool    = true
     fileprivate var nowPlayingPressed:Bool  = true
-    fileprivate var movieFilter             = "popular"
-    fileprivate var pageNumber: Int         = 1
+    fileprivate var pageNumber              = 1
     fileprivate var lastPage: Bool          = false
 
     
@@ -31,18 +30,15 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.dataSource = self
         tableView.delegate = self
         SwiftSpinner.show("Loadings movies")
+        if Reachability.isConnectedToNetwork() == true {
         MoviesModel.instance.loadPopularMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
+        } else {
+            MoviesModel.instance.setMovies(movies: [])
+            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
+        }
+        SwiftSpinner.hide()
         popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         
-    }
- 
-    override var preferredStatusBarStyle: UIStatusBarStyle { 
-        return .lightContent
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -11,6 +11,7 @@ import SDWebImage
 import Alamofire
 import AlamofireObjectMapper
 
+
 let apiKey = "55580621b06134aae72c3266c0fed8bf"
 public let langStr = Locale.current.languageCode
 
@@ -110,7 +111,6 @@ class Sender {
         Alamofire.request("https://api.themoviedb.org/3/tv/popular?api_key=\(apiKey)", parameters: params).responseArray(queue: nil, keyPath: "results", context: nil) { (response: DataResponse<[SerialsVO]>) in
             switch response.result {
             case .success(let result):
-                print(result)
                 SerialsModel.instance.setSerials(serials: result)
                 serilasLoaded()
             case .failure(let error):

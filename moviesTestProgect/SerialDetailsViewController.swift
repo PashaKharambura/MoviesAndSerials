@@ -10,7 +10,7 @@ import UIKit
 import AFNetworking
 import Cosmos
 
-class SerialDetailsViewController: UIViewController {
+class SerialDetailsViewController: MyViewController {
     
     @IBOutlet weak var posterImage:     UIImageView!
     @IBOutlet weak var titleNameLabe:   UILabel!
@@ -20,7 +20,7 @@ class SerialDetailsViewController: UIViewController {
     @IBOutlet weak var descriptionText: UITextView!
 
     var selectedSerial: SerialsVO!
-    var imageUrl: String = ""
+    var imageUrl: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,10 +38,6 @@ class SerialDetailsViewController: UIViewController {
                 imageUrl = "\(String(describing: imageURL))"
             }
         }
-    }
-
-    override var preferredStatusBarStyle: UIStatusBarStyle { 
-        return .lightContent
     }
     
     @IBAction func addToFavourite(_ sender: UIButton) {

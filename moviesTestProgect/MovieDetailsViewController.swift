@@ -10,7 +10,7 @@ import UIKit
 import AFNetworking
 import Cosmos
 
-class MovieDetailsViewController: UIViewController {
+class MovieDetailsViewController: MyViewController {
 
     @IBOutlet weak var posterImage:     UIImageView!
     @IBOutlet weak var titleNameLabe:   UILabel!
@@ -20,7 +20,7 @@ class MovieDetailsViewController: UIViewController {
     @IBOutlet weak var descriptionText: UITextView!
     
     var selectedMovie: MoviesVO!
-    var imageUrl: String = ""
+    var imageUrl: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,10 +41,6 @@ class MovieDetailsViewController: UIViewController {
         
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
     @IBAction func addToFavourite(_ sender: UIButton) {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         

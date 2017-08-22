@@ -24,7 +24,6 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     fileprivate var pageNumber: Int         = 1
     fileprivate var lastPage: Bool          = false
 
-    var movies: [NSDictionary]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +31,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.dataSource = self
         tableView.delegate = self
         SwiftSpinner.show("Loadings movies")
-        fetchRequest(filter: movieFilter, page: pageNumber)
+        MoviesModel.instance.loadPopularMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
         popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         
     }
@@ -47,63 +46,36 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies?.count ?? 0
+        return MoviesModel.instance.movies?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell") as! MoviesTableViewCell
         let index = indexPath.row
-        let movie = movies?[index]
+        let movie = MoviesModel.instance.movies?[index]
         
-        if let posterPath = movie?["poster_path"] as? String {
+        if let posterPath = movie?.posterPath {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
             let imageURL = URL(string: baseUrl + posterPath)
             cell.titleImage.setImageWith(imageURL!)
         }
         
-        let rating = "\(String(describing: movie?["vote_average"] as! Double))/10"
+        let rating = "\(movie?.voteAverage ?? 0.0)/10"
         cell.rating.text = rating
-        cell.titleLabel.text = movie?["original_title"] as? String
-        cell.localizedName.text = movie?["title"] as? String
-        cell.ratingStars.rating = (movie?["vote_average"] as! Double)/2
+        cell.titleLabel.text = movie?.originalTitle
+        cell.localizedName.text = movie?.title
+        cell.ratingStars.rating = (movie?.voteAverage)!/2
         
         return cell
     }
     
-    fileprivate  func fetchRequest(filter: String, page: Int) {
-        
-        if Reachability.isConnectedToNetwork() == true {
-            let apiKey = "55580621b06134aae72c3266c0fed8bf"
-            if let url = URL(string:"https://api.themoviedb.org/3/movie/\(filter)?api_key=\(apiKey)&page=\(page)&language=\(langStr!)") {
-           
-                let request = URLRequest(url: url)
-                
-                let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
-                
-                let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
-                    if let data = dataOrNil {
-                        if let responseDictionary = try! JSONSerialization.jsonObject( with: data, options:[]) as? NSDictionary {
-                            self.movies = responseDictionary["results"] as? [NSDictionary]
-                            self.tableView.reloadData()
-                            SwiftSpinner.hide()
-                        }
-                    }
-                })
-            task.resume()
-            }
-        } else {
-            SwiftSpinner.hide()
-            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
-
-        }
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as UIViewController
         if segue.identifier == "movie" {
             let cell = sender as! MoviesTableViewCell
             let indexPath = tableView.indexPath(for: cell)
-            let movie = movies![indexPath!.row]
+            let movie = MoviesModel.instance.movies![indexPath!.row]
             let detailsViewController = destinationVC as! MovieDetailsViewController
             detailsViewController.selectedMovie = movie
         }
@@ -114,9 +86,11 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         popularButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        
         pageNumber = 1
-        movieFilter = "popular"
-        fetchRequest(filter: movieFilter, page: pageNumber)
+        
+        MoviesModel.instance.loadPopularMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
+        
         popularPressed = true
         topRatedPressed = false
         nowPlayingPressed = false
@@ -127,9 +101,10 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         SwiftSpinner.show("Loadings movies")
+        
         pageNumber = 1
-        movieFilter = "top_rated"
-        fetchRequest(filter: movieFilter, page: pageNumber)
+        MoviesModel.instance.loadTOpRatedMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
+        
         popularPressed = false
         topRatedPressed = true
         nowPlayingPressed = false
@@ -140,26 +115,26 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         topRatedBitton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 11)
         nowPlaying.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         SwiftSpinner.show("Loadings movies")
+        
         pageNumber = 1
-        movieFilter = "now_playing"
-        fetchRequest(filter: movieFilter, page: pageNumber)
+        MoviesModel.instance.loadNowPlayingMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
+        
         popularPressed = false
         topRatedPressed = false
         nowPlayingPressed = true
     }
     
     @IBAction func nextPage(_ sender: Any) {
-        if movies?.count == 20 {
+        if MoviesModel.instance.movies?.count == 20 {
             pageNumber += 1
             SwiftSpinner.show("Loading serials")
             if popularPressed {
-                movieFilter = "popular"
+                MoviesModel.instance.loadPopularMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
             } else if topRatedPressed {
-                movieFilter = "top_rated"
+                MoviesModel.instance.loadTOpRatedMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
             } else {
-                movieFilter = "now_playing"
+                MoviesModel.instance.loadNowPlayingMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
             }
-            fetchRequest(filter: movieFilter, page: pageNumber)
         }
     }
     
@@ -168,13 +143,12 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
             pageNumber += -1
             SwiftSpinner.show("Loading serials")
             if popularPressed {
-                movieFilter = "popular"
+                MoviesModel.instance.loadPopularMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
             } else if topRatedPressed {
-                movieFilter = "top_rated"
+                MoviesModel.instance.loadTOpRatedMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
             } else {
-                movieFilter = "now_playing"
+                MoviesModel.instance.loadNowPlayingMovies(page: pageNumber, moviesLoaded: tableView.reloadData)
             }
-            fetchRequest(filter: movieFilter, page: pageNumber)
         }
     }
     

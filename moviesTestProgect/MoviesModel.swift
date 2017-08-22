@@ -10,7 +10,7 @@ import Foundation
 
 class MoviesModel {
     
-    private (set) var movies:[MoviesVO] = []
+    private (set) var movies:[MoviesVO]?
     static var instance: MoviesModel = MoviesModel()
     
     func loadPopularMovies(page: Int, moviesLoaded: @escaping () -> Void) {
@@ -30,7 +30,7 @@ class MoviesModel {
     }
     
     func setMovies(movies: [MoviesVO]) {
-        self.movies += movies
+        self.movies = movies
     }
     
 }

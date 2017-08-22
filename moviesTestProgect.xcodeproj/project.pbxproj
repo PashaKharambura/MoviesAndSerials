@@ -175,10 +175,10 @@
 		29EDC0FC1F4C5F780050392C /* Movies */ = {
 			isa = PBXGroup;
 			children = (
-				2979611C1F2F8D41006CC0B4 /* MoviesTableViewCell.swift */,
 				297961001F2F77FE006CC0B4 /* MoviesViewController.swift */,
 				29AD52BD1F2FF050003D333E /* SecondSearchViewController.swift */,
 				29AD52BF1F2FF062003D333E /* SecondSearchTableViewCell.swift */,
+				2979611C1F2F8D41006CC0B4 /* MoviesTableViewCell.swift */,
 				297961181F2F8BCF006CC0B4 /* MovieDetailsViewController.swift */,
 			);
 			name = Movies;

@@ -12,7 +12,7 @@ import Foundation
 class SerialsModel {
     
 
-    private (set) var serials:[SerialsVO] = []
+    private (set) var serials:[SerialsVO]?
     static var instance: SerialsModel = SerialsModel()
     
     func loadPopularSerials(page: Int, serialsLoaded: @escaping () -> Void) {
@@ -31,8 +31,10 @@ class SerialsModel {
         Sender().requestSearchSerials(page: page, language: langStr!, query: query, serialsLoaded: serialsLoaded)
     }
     
+    
+    
     func setSerials(serials: [SerialsVO]) {
-        self.serials += serials
+        self.serials = serials
     }
     
 }

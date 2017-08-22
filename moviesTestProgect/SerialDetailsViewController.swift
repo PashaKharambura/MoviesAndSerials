@@ -29,7 +29,7 @@ class SerialDetailsViewController: UIViewController {
         titleNameLabe.text = title
         descriptionText.text = selectedSerial.overview
         releaseDate.text = selectedSerial.firstAirDate
-        voteAverage.text = "\(String(describing: selectedSerial.voteAverage))"
+        voteAverage.text = "\(selectedSerial.voteAverage ?? 0.0)"
         starsView.rating = (selectedSerial?.voteAverage)!
         if let posterPath = selectedSerial.posterPath{
             let baseUrl = "http://image.tmdb.org/t/p/w500"

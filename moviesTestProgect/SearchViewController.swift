@@ -16,13 +16,13 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
     @IBOutlet weak var tableView:   UITableView!
     
     fileprivate var pageNumber: Int = 1
-    
-    var serials: [SerialsVO]?
+
     var searchText: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        SerialsModel.instance.setSerials(serials: [])
         tableView.dataSource = self
         tableView.delegate = self
         mySearchBar.delegate = self
@@ -36,13 +36,13 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return serials?.count ?? 0
+        return SerialsModel.instance.serials?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell") as! SearchTableViewCell
         let index = indexPath.row
-        let serial = serials?[index]
+        let serial = SerialsModel.instance.serials?[index]
         
         if let posterPath = serial?.posterPath {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
@@ -50,10 +50,10 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
             cell.titleImage.setImageWith(imageURL!)
         }
         
-        let rating = "\(String(describing: serial?.voteAverage))/10"
+        let rating = "\(serial?.voteAverage ?? 0.0)/10"
         cell.rating.text = rating
         cell.titleLabel.text = serial?.originalName
-        cell.localizedName.text = serial?.originalName
+        cell.localizedName.text = serial?.name
         cell.ratingStars.rating = (serial?.voteAverage)!/2
     
         return cell
@@ -64,14 +64,14 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         if segue.identifier == "searchSegue" {
             let cell = sender as! SearchTableViewCell
             let indexPath = tableView.indexPath(for: cell)
-            let serial = serials![indexPath!.row]
+            let serial = SerialsModel.instance.serials![indexPath!.row]
             let detailsViewController = destinationVC as! SerialDetailsViewController
             detailsViewController.selectedSerial = serial
         }
     }
     
     @IBAction func nextPage(_ sender: Any) {
-        if serials?.count == 20 {
+        if SerialsModel.instance.serials?.count == 20 {
             pageNumber += 1
             SwiftSpinner.show("Loading serials")
             if let text = searchText {

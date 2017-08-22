@@ -103,33 +103,18 @@ class Sender {
             "language" : language
             ] as [String : Any]
         
-        Alamofire.request("https://api.themoviedb.org/3/tv/popular?api_key=\(apiKey)", parameters: params).responseJSON {
-            (response: DataResponse<Any>) in
+        Alamofire.request("https://api.themoviedb.org/3/tv/popular?api_key=\(apiKey)", parameters: params).responseArray(queue: nil, keyPath: "results", context: nil) { (response: DataResponse<[SerialsVO]>) in
             switch response.result {
-            case .success:
-                let respDict = response.value as? [String:Any]
-                print(respDict!)
-                let resultDict = respDict?["results"] as? [[String:Any]]
-                print("MY Dict: \(resultDict!)")
+            case .success(let result):
+                print(result)
+                SerialsModel.instance.setSerials(serials: result)
+                serilasLoaded()
             case .failure(let error):
-                print(error)
+                print("Error: \(error)")
             }
-            
-            
         }
-        
-//        responseArray {
-//            (response: DataResponse<[SerialsVO]>) in
-//            print("Response:\(response)")
-//
-//            switch response.result {
-//            case .success(let result):
-//                SerialsModel.instance.setSerials(serials: result)
-//                serilasLoaded()
-//            case .failure(let error):
-//                print("Error: \(error)")
-//            }
-//        }
+        SwiftSpinner.hide()
+
     }
     
     func requestTopRatedSerials(page: Int, language: String, serialsLoaded: @escaping () -> Void) {
@@ -139,7 +124,7 @@ class Sender {
             "language" : language
             ] as [String : Any]
         
-        Alamofire.request("https://api.themoviedb.org/3/tv/top_rated?api_key=\(apiKey)", parameters: params).responseArray {
+        Alamofire.request("https://api.themoviedb.org/3/tv/top_rated?api_key=\(apiKey)", parameters: params).responseArray(queue: nil, keyPath: "results", context: nil) {
             (response: DataResponse<[SerialsVO]>) in
             switch response.result {
             case .success(let result):
@@ -149,6 +134,8 @@ class Sender {
                 print("Error: \(error)")
             }
         }
+        SwiftSpinner.hide()
+
     }
     
     func requestNowPlayingSerials(page: Int, language: String, serialsLoaded: @escaping () -> Void) {
@@ -158,7 +145,7 @@ class Sender {
             "language" : language
             ] as [String : Any]
         
-        Alamofire.request("https://api.themoviedb.org/3/tv/airing_today?api_key=\(apiKey)", parameters: params).responseArray {
+        Alamofire.request("https://api.themoviedb.org/3/tv/airing_today?api_key=\(apiKey)", parameters: params).responseArray(queue: nil, keyPath: "results", context: nil) {
             (response: DataResponse<[SerialsVO]>) in
             switch response.result {
             case .success(let result):
@@ -168,6 +155,8 @@ class Sender {
                 print("Error: \(error)")
             }
         }
+        SwiftSpinner.hide()
+
     }
     
     func requestSearchSerials(page: Int, language: String, query:String, serialsLoaded: @escaping () -> Void) {
@@ -179,7 +168,7 @@ class Sender {
             "language" : language
             ] as [String : Any]
         
-        Alamofire.request("https://api.themoviedb.org/3/search/tv?api_key=\(apiKey)", parameters: params).responseArray {
+        Alamofire.request("https://api.themoviedb.org/3/search/tv?api_key=\(apiKey)", parameters: params).responseArray(queue: nil, keyPath: "results", context: nil) {
             (response: DataResponse<[SerialsVO]>) in
             switch response.result {
             case .success(let result):
@@ -189,8 +178,9 @@ class Sender {
                 print("Error: \(error)")
             }
         }
+        SwiftSpinner.hide()
+
     }
-    
-    
+ 
     
 }

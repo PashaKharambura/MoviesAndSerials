@@ -9,6 +9,10 @@ target 'moviesTestProgect' do
     pod 'AFNetworking'
     pod 'MBProgressHUD'
     pod 'Cosmos', '~> 11.0'
+    pod 'Alamofire', '~> 4.5'
+    pod 'SDWebImage', '~> 4.0'
+    pod 'ObjectMapper', '~> 2.2'
+    pod 'AlamofireObjectMapper', '~> 4.1'
 
 
 end

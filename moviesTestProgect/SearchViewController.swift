@@ -10,51 +10,49 @@ import UIKit
 import AFNetworking
 import SystemConfiguration
 
-class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class SearchViewController: MyViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
     @IBOutlet weak var mySearchBar: UISearchBar!
     @IBOutlet weak var tableView:   UITableView!
     
-    fileprivate var pageNumber: Int = 1
-    
-    var serials: [NSDictionary]?
+    fileprivate var pageNumber = 1
+
     var searchText: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        SerialsModel.instance.setSerials(serials: [])
         tableView.dataSource = self
         tableView.delegate = self
         mySearchBar.delegate = self
         mySearchBar.returnKeyType = UIReturnKeyType.done
         mySearchBar.becomeFirstResponder()
-        
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle { 
-        return .lightContent
+        if Reachability.isConnectedToNetwork() == false {
+            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return serials?.count ?? 0
+        return SerialsModel.instance.serials?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell") as! SearchTableViewCell
         let index = indexPath.row
-        let serial = serials?[index]
+        let serial = SerialsModel.instance.serials?[index]
         
-        if let posterPath = serial?["poster_path"] as? String {
+        if let posterPath = serial?.posterPath {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
             let imageURL = URL(string: baseUrl + posterPath)
             cell.titleImage.setImageWith(imageURL!)
         }
         
-        let rating = "\(String(describing: serial?["vote_average"] as! Double))/10"
+        let rating = "\(serial?.voteAverage ?? 0.0)/10"
         cell.rating.text = rating
-        cell.titleLabel.text = serial?["original_name"] as? String
-        cell.localizedName.text = serial?["original_name"] as? String
-        cell.ratingStars.rating = (serial?["vote_average"] as! Double)/2
+        cell.titleLabel.text = serial?.originalName
+        cell.localizedName.text = serial?.name
+        cell.ratingStars.rating = (serial?.voteAverage)!/2
     
         return cell
     }
@@ -64,18 +62,19 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         if segue.identifier == "searchSegue" {
             let cell = sender as! SearchTableViewCell
             let indexPath = tableView.indexPath(for: cell)
-            let serial = serials![indexPath!.row]
+            let serial = SerialsModel.instance.serials![indexPath!.row]
             let detailsViewController = destinationVC as! SerialDetailsViewController
             detailsViewController.selectedSerial = serial
         }
     }
     
     @IBAction func nextPage(_ sender: Any) {
-        if serials?.count == 20 {
+        if SerialsModel.instance.serials?.count == 20 {
             pageNumber += 1
             SwiftSpinner.show("Loading serials")
             if let text = searchText {
-                fetchRequest(query: text, page: pageNumber)
+                SerialsModel.instance.loadSearchingSerials(page: pageNumber, query: text, serialsLoaded: tableView.reloadData)
+                SwiftSpinner.hide()
             }
         }
     }
@@ -84,16 +83,18 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         SwiftSpinner.show("Loading serials")
         let mySearchString = "\(String(describing: searchBar.text!))"
         searchText = mySearchString
-        fetchRequest(query: mySearchString, page: pageNumber)
-        print("searchText \(mySearchString)")
-        self.view.endEditing(true)
+        if let text = searchText {
+            SerialsModel.instance.loadSearchingSerials(page: pageNumber, query: text, serialsLoaded: tableView.reloadData)
+            SwiftSpinner.hide()
+            self.view.endEditing(true)
+        }
     }
     
     @IBAction func previousPage(_ sender: UIButton) {
         if pageNumber != 1 {
             pageNumber += -1
             if let text = searchText {
-                fetchRequest(query: text, page: pageNumber)
+                SerialsModel.instance.loadSearchingSerials(page: pageNumber, query: text, serialsLoaded: tableView.reloadData)
             }
         } else {
             return
@@ -103,44 +104,4 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
     @IBAction func goBack(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }
-    
-    fileprivate func fetchRequest(query:String, page: Int) {
-
-        if Reachability.isConnectedToNetwork() == true {
-            let newQuery = query.replacingOccurrences(of: " ", with: "+")
-            let apiKey = "55580621b06134aae72c3266c0fed8bf"
-            if let url = URL(string:"https://api.themoviedb.org/3/search/tv?api_key=\(apiKey)&query=\(newQuery)&page=\(page)&language=\(langStr!)") {
-           
-                let request = URLRequest(url: url)
-                
-                let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
-                
-                let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
-                    if let data = dataOrNil {
-                        if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
-                            self.serials = responseDictionary["results"] as? [NSDictionary]
-                            if self.serials! == [] {
-                                SwiftSpinner.hide()
-                                AlertDialog.showAlert("Error", message: "No serials for your input", viewController: self)
-
-                            } else {
-                            self.tableView.reloadData()
-                            SwiftSpinner.hide()
-                            }
-                        }
-                    }
-                })
-            task.resume()
-            } else {
-                SwiftSpinner.hide()
-                AlertDialog.showAlert("Error", message: "No serials for your input", viewController: self)
-
-            }
-        } else {
-            SwiftSpinner.hide()
-            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
-
-        }
-    }
-
 }

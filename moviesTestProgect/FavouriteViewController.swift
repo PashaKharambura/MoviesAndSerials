@@ -9,7 +9,7 @@
 import UIKit
 import AFNetworking
 
-class FavouriteViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class FavouriteViewController: MyViewController, UITableViewDelegate, UITableViewDataSource {
 
     var favouriteItems: [Movie]?
     
@@ -23,10 +23,6 @@ class FavouriteViewController: UIViewController, UITableViewDelegate, UITableVie
         tableView.dataSource = self
         tableView.delegate = self
 
-    }
-
-    override var preferredStatusBarStyle: UIStatusBarStyle { 
-        return .lightContent
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

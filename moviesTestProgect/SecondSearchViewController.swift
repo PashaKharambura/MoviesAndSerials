@@ -10,51 +10,51 @@ import UIKit
 import AFNetworking
 import SystemConfiguration
 
-class SecondSearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class SecondSearchViewController: MyViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
     @IBOutlet weak var mySearchBar: UISearchBar!
     @IBOutlet weak var tableView:   UITableView!
     
-    fileprivate var pageNumber: Int = 1
+    fileprivate var pageNumber = 1
     
-    var movies: [NSDictionary]?
     var searchText: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        MoviesModel.instance.setMovies(movies: [])
+
         tableView.dataSource = self
         tableView.delegate = self
         mySearchBar.delegate = self
         mySearchBar.returnKeyType = UIReturnKeyType.done
         mySearchBar.becomeFirstResponder()
         
+        if Reachability.isConnectedToNetwork() == false {
+            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
+        }
     }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle { 
-        return .lightContent
-    }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies?.count ?? 0
+        return MoviesModel.instance.movies?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "movieSearchCell") as! SecondSearchTableViewCell
         let index = indexPath.row
-        let movie = movies?[index]
+        let movie = MoviesModel.instance.movies?[index]
         
-        if let posterPath = movie?["poster_path"] as? String {
+        if let posterPath = movie?.posterPath {
             let baseUrl = "http://image.tmdb.org/t/p/w500"
             let imageURL = URL(string: baseUrl + posterPath)
             cell.titleImage.setImageWith(imageURL!)
         }
         
-        let rating = "\(String(describing: movie?["vote_average"] as! Double))/10"
+        let rating = "\( movie?.voteAverage ?? 0.0)/10"
         cell.rating.text = rating
-        cell.titleLabel.text = movie?["original_title"] as? String
-        cell.localizedName.text = movie?["original_title"] as? String
-        cell.ratingStars.rating = (movie?["vote_average"] as! Double)/2
+        cell.titleLabel.text = movie?.originalTitle
+        cell.localizedName.text = movie?.originalTitle
+        cell.ratingStars.rating = (movie?.voteAverage)!/2
         
         return cell
     }
@@ -64,7 +64,7 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
         if segue.identifier == "movieSearch" {
             let cell = sender as! SecondSearchTableViewCell
             let indexPath = tableView.indexPath(for: cell)
-            let movie = movies![indexPath!.row]
+            let movie = MoviesModel.instance.movies![indexPath!.row]
             let detailsViewController = destinationVC as! MovieDetailsViewController
             detailsViewController.selectedMovie = movie
         }
@@ -74,17 +74,18 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
         SwiftSpinner.show("Loading films")
         let mySearchString = "\(String(describing: searchBar.text!))"
         searchText = mySearchString
-        fetchRequest(query: mySearchString, page: pageNumber)
-        print("searchText \(mySearchString)")
-        self.view.endEditing(true)
+        if let text = searchText {
+            MoviesModel.instance.loadSearchingMOvies(page: pageNumber, query: text , moviesLoaded: tableView.reloadData)
+            self.view.endEditing(true)
+        }
     }
     
     @IBAction func nextPage(_ sender: Any) {
-        if movies?.count == 20 {
+        if MoviesModel.instance.movies?.count == 20 {
             pageNumber += 1
             SwiftSpinner.show("Loading movies")
             if let text = searchText {
-                fetchRequest(query: text, page: pageNumber)
+                MoviesModel.instance.loadSearchingMOvies(page: pageNumber, query: text, moviesLoaded: tableView.reloadData)
             }
         }
     }
@@ -93,7 +94,7 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
         if pageNumber != 1 {
             pageNumber += -1
             if let text = searchText {
-                fetchRequest(query: text, page: pageNumber)
+                MoviesModel.instance.loadSearchingMOvies(page: pageNumber, query: text, moviesLoaded: tableView.reloadData)
             }
         } else {
             return
@@ -102,46 +103,6 @@ class SecondSearchViewController: UIViewController, UITableViewDelegate, UITable
     
     @IBAction func goBack(_ sender: UIButton) {
         navigationController?.popViewController(animated: true)
-    }
-    
-    fileprivate func fetchRequest(query:String, page: Int) {
-        
-        if Reachability.isConnectedToNetwork() == true {
-            let newQuery = query.replacingOccurrences(of: " ", with: "+")
-            let apiKey = "55580621b06134aae72c3266c0fed8bf"
-            
-            if let url = URL(string:"https://api.themoviedb.org/3/search/movie?api_key=\(apiKey)&query=\(newQuery)&page=\(page)&language=\(langStr!)") {
-     
-                let request = URLRequest(url: url)
-                
-                let session = URLSession(configuration: URLSessionConfiguration.default, delegate:nil, delegateQueue:OperationQueue.main)
-                
-                let task : URLSessionDataTask = session.dataTask(with: request, completionHandler: { (dataOrNil, response, error) in
-                    if let data = dataOrNil {
-                        if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options:[]) as? NSDictionary {
-                            self.movies = responseDictionary["results"] as? [NSDictionary]
-                            if self.movies! == [] {
-                                SwiftSpinner.hide()
-                                AlertDialog.showAlert("Error", message: "No movies for your input", viewController: self)
-                                
-                            } else {
-                                self.tableView.reloadData()
-                                SwiftSpinner.hide()
-                            }
-                        }
-                    }
-                })
-            task.resume()
-            } else {
-                SwiftSpinner.hide()
-                AlertDialog.showAlert("Error", message: "No movies for your input", viewController: self)
-                
-            }
-        } else {
-            SwiftSpinner.hide()
-            AlertDialog.showAlert("Error", message: "Check your internet connection", viewController: self)
-
-        }
     }
     
 }

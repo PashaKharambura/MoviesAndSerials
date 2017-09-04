@@ -439,8 +439,8 @@
                     <navigationItem key="navigationItem" id="e4K-51-taG"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
-                        <outlet property="nowPlaying" destination="aFd-1e-xUt" id="ZtG-fs-Tgp"/>
-                        <outlet property="popularButton" destination="Mmm-en-p7a" id="83J-8H-1nZ"/>
+                        <outlet property="nowPlaying" destination="aFd-1e-xUt" id="ftO-gV-yCD"/>
+                        <outlet property="popularButton" destination="Mmm-en-p7a" id="N9s-q0-uEt"/>
                         <outlet property="tableView" destination="jD6-b0-4so" id="3oV-WT-ZwC"/>
                         <outlet property="topRatedBitton" destination="GZ1-q5-JV0" id="2Oa-5H-ccv"/>
                     </connections>
@@ -1645,7 +1645,7 @@
         <image name="tv" width="30" height="22"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="mch-B4-jIN"/>
+        <segue reference="oem-qv-6i0"/>
         <segue reference="n4F-xy-4q0"/>
     </inferredMetricsTieBreakers>
 </document>
